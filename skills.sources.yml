@@ -1,7 +1,7 @@
 skills:
   - name: spec-database
     repo: https://github.com/ImFineGarrix/claude-skill-spec-database.git
-    branch: main
+    branch: master
     source_path: .
     target_path: ProgramType_Skills/spec-database
     enabled: true

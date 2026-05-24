@@ -49,7 +49,7 @@ jobs:
           skills.each do |skill|
             name = skill.fetch("name")
             repo = skill.fetch("repo")
-            branch = skill.fetch("branch", "main")
+            branch = skill.fetch("branch", "master")
             source_path = skill.fetch("source_path", ".")
             target_path = skill.fetch("target_path")
 

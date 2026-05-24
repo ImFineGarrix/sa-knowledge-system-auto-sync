@@ -108,28 +108,29 @@ jobs:
       - name: Create branch and commit
         if: steps.changes.outputs.changed == 'true'
         run: |
-          BRANCH="bot/auto-pull-programtype-skills-$(date +%Y%m%d-%H%M%S)"
+          BRANCH="bot/auto-pull-programtype-skills"
           echo "BRANCH=$BRANCH" >> "$GITHUB_ENV"
 
-          git checkout -b "$BRANCH"
+          git switch -C "$BRANCH"
           git add ProgramType_Skills "$SOURCES_FILE"
           git commit -m "sync: auto pull ProgramType skills"
-          git push origin "$BRANCH"
+          git push --force origin "$BRANCH"
 
-      - name: Create PR
+      - name: Create or update PR
         if: steps.changes.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr create \
-            --title "sync: auto pull ProgramType skills" \
-            --body-file pr-body.md \
-            --base "$BASE_BRANCH" \
-            --head "$BRANCH"
+          EXISTING=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number // ""')
 
-      - name: Auto merge PR
-        if: steps.changes.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh pr merge "$BRANCH" --merge --auto --delete-branch
+          if [ -n "$EXISTING" ]; then
+            echo "Updating existing PR #$EXISTING"
+            gh pr edit "$EXISTING" --body-file pr-body.md
+          else
+            echo "Creating new PR"
+            gh pr create \
+              --title "sync: auto pull ProgramType skills" \
+              --body-file pr-body.md \
+              --base "$BASE_BRANCH" \
+              --head "$BRANCH"
+          fi

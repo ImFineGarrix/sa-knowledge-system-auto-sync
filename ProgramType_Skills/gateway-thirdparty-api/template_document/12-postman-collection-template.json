@@ -1,0 +1,187 @@
+{
+  "info": {
+    "name": "Partner API Collection",
+    "description": "External-safe Postman collection for partner API integration. Organization default uses X-API-Key, X-Client-Id, X-Request-Id, X-Correlation-Id, and X-Timestamp. Do not include real secrets or internal-only URLs.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://uat-api.example.com"
+    },
+    {
+      "key": "apiKey",
+      "value": "REPLACE_WITH_PARTNER_API_KEY"
+    },
+    {
+      "key": "clientId",
+      "value": "REPLACE_WITH_PARTNER_CLIENT_ID"
+    },
+    {
+      "key": "autoRequestId",
+      "value": ""
+    },
+    {
+      "key": "autoTimestamp",
+      "value": ""
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {",
+          "  const r = Math.random() * 16 | 0;",
+          "  return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);",
+          "});",
+          "pm.collectionVariables.set('autoRequestId', uuid);",
+          "pm.collectionVariables.set('autoTimestamp', new Date().toISOString());"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "01 - Health Check",
+      "item": [
+        {
+          "name": "GET /actuator/health",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actuator/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "actuator",
+                "health"
+              ]
+            },
+            "description": "Partner-accessible health check when exposed. Remove this request if health check is internal only."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 - Main APIs",
+      "item": [
+        {
+          "name": "Sample API",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Has X-Trace-Id', () => pm.expect(pm.response.headers.get('X-Trace-Id')).to.be.a('string'));",
+                  "pm.test('Has X-Api-Version', () => pm.expect(pm.response.headers.get('X-Api-Version')).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              },
+              {
+                "key": "X-Request-Id",
+                "value": "{{autoRequestId}}"
+              },
+              {
+                "key": "X-Correlation-Id",
+                "value": "TXN-SAMPLE-001"
+              },
+              {
+                "key": "X-Timestamp",
+                "value": "{{autoTimestamp}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/sample",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "sample"
+              ]
+            },
+            "description": "Replace this sample request with the partner-facing API endpoint."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03 - Error Scenarios",
+      "item": [
+        {
+          "name": "Missing X-API-Key -> 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Client-Id",
+                "value": "{{clientId}}"
+              },
+              {
+                "key": "X-Request-Id",
+                "value": "{{autoRequestId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/sample",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "sample"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

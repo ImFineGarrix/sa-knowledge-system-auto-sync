@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/session-start-pull.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

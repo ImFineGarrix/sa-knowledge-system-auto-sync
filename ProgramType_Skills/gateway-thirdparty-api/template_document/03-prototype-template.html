@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SA UI Prototype</title>
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; background: #f6f7f9; color: #1f2937; }
+    header { background: #ffffff; border-bottom: 1px solid #d8dee8; padding: 16px 24px; }
+    main { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 65px); }
+    nav { background: #ffffff; border-right: 1px solid #d8dee8; padding: 16px; }
+    button { cursor: pointer; border: 1px solid #b8c2d0; background: #ffffff; padding: 8px 12px; border-radius: 6px; }
+    button.primary { background: #155eef; color: #ffffff; border-color: #155eef; }
+    .screen { padding: 24px; }
+    .panel { background: #ffffff; border: 1px solid #d8dee8; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+    label { display: block; font-size: 13px; margin: 12px 0 4px; }
+    input, select, textarea { width: 100%; box-sizing: border-box; border: 1px solid #b8c2d0; border-radius: 6px; padding: 8px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border-bottom: 1px solid #e5e7eb; padding: 10px; text-align: left; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <strong>Project Prototype</strong>
+  </header>
+  <main>
+    <nav>
+      <button onclick="showScreen('list')">List</button>
+      <button onclick="showScreen('form')">Create/Edit</button>
+    </nav>
+    <section id="list" class="screen">
+      <div class="panel">
+        <button class="primary" onclick="showScreen('form')">Create</button>
+      </div>
+      <div class="panel">
+        <table>
+          <thead><tr><th>ID</th><th>Name</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Sample item</td><td>Draft</td><td><button onclick="showScreen('form')">Edit</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section id="form" class="screen hidden">
+      <div class="panel">
+        <label>Name</label>
+        <input id="name" placeholder="Enter name">
+        <label>Status</label>
+        <select><option>Draft</option><option>Submitted</option><option>Approved</option></select>
+        <label>Remark</label>
+        <textarea rows="4"></textarea>
+        <p id="message"></p>
+        <button onclick="showScreen('list')">Cancel</button>
+        <button class="primary" onclick="saveForm()">Save</button>
+      </div>
+    </section>
+  </main>
+  <script>
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+    }
+    function saveForm() {
+      const name = document.getElementById('name').value.trim();
+      document.getElementById('message').textContent = name ? 'Saved successfully.' : 'Name is required.';
+    }
+  </script>
+</body>
+</html>
+

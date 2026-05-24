@@ -1,0 +1,66 @@
+name: Sync skills + agents from upstream
+
+# Pulls latest .claude/agents/, .claude/skills/, and ProgramType_Skills/
+# from sa-knowledge-system into this team vault on a daily schedule.
+# Vault-specific files (Memory/, Projects/, reference_data/, Tech/, MOC/,
+# Templates/, .obsidian/) are NEVER touched.
+
+on:
+  schedule:
+    - cron: "30 0 * * *"    # 07:30 ICT (UTC+7) daily — before workday starts
+  workflow_dispatch:         # manual trigger from Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-skills
+  cancel-in-progress: false
+
+env:
+  UPSTREAM_URL: https://github.com/ZaynTRPW/sa-knowledge-system.git
+  UPSTREAM_BRANCH: main
+  SYNC_PATHS: ".claude/agents .claude/skills ProgramType_Skills"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout team vault
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git identity
+        run: |
+          git config user.name  "skill-sync-bot"
+          git config user.email "skill-sync-bot@users.noreply.github.com"
+
+      - name: Add upstream + fetch
+        run: |
+          git remote add upstream "$UPSTREAM_URL" || git remote set-url upstream "$UPSTREAM_URL"
+          git fetch upstream "$UPSTREAM_BRANCH"
+
+      - name: Sync paths from upstream (vault content stays untouched)
+        run: |
+          for p in $SYNC_PATHS; do
+            echo "→ syncing $p"
+            git checkout "upstream/$UPSTREAM_BRANCH" -- "$p" 2>/dev/null || echo "  (skip: $p not in upstream)"
+          done
+
+      - name: Commit + push if changed
+        run: |
+          git add -A
+          if git diff --staged --quiet; then
+            echo "✓ Already up to date — no changes to commit"
+            exit 0
+          fi
+          CHANGED=$(git diff --staged --name-only | wc -l)
+          git commit -m "sync: pull $CHANGED file(s) from upstream agents/skills
+
+          source: ${UPSTREAM_URL}@${UPSTREAM_BRANCH}
+          paths:  ${SYNC_PATHS}
+          run:    https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          git push origin HEAD:${{ github.ref_name }}
+          echo "✓ Pushed $CHANGED file(s) to ${{ github.ref_name }}"

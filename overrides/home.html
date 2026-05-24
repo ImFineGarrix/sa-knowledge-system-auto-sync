@@ -1,0 +1,164 @@
+{% extends "main.html" %}
+
+{% block extrahead %}
+  {{ super() }}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400;1,9..144,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block tabs %}
+{{ super() }}
+<section class="hero">
+  <div class="hero__inner">
+    <div class="hero__eyebrow">
+      <span class="dot"></span>
+      <span>SA KNOWLEDGE SYSTEM · v2026.05</span>
+    </div>
+
+    <h1 class="hero__title">
+      <span class="line">ระบบปฏิบัติการ</span>
+      <span class="line">สำหรับ <em>Solution Architect</em></span>
+      <span class="small-en">An operating system for SA teams.</span>
+    </h1>
+
+    <p class="hero__lede">
+      Knowledge base ที่ขับเคลื่อนด้วย AI agent <span class="en">15</span> ตัว, skill <span class="en">13</span> ตัว,
+      และระบบ memory ที่ไม่ลืม — ทีม SA เขียน spec ได้เร็วขึ้น สม่ำเสมอขึ้น และไม่เสีย context อีกต่อไป
+    </p>
+
+    <div class="hero__cta">
+      <a href="get-started/" class="btn btn--primary">
+        <span>เริ่มใช้งาน</span>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12m-5-5l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="agents/" class="btn btn--ghost">
+        <span>ดู agent ทั้ง <span class="en">15</span> ตัว</span>
+      </a>
+    </div>
+
+    <div class="hero__stats">
+      <div class="stat"><div class="stat__num">15</div><div class="stat__label">AI Agents</div></div>
+      <div class="stat"><div class="stat__num">13</div><div class="stat__label">Skills</div></div>
+      <div class="stat"><div class="stat__num">1</div><div class="stat__label">MCP server</div></div>
+      <div class="stat"><div class="stat__num">N</div><div class="stat__label">Sub-team vaults</div></div>
+    </div>
+  </div>
+
+  <div class="hero__scroll">
+    <span>Scroll</span>
+    <div class="hero__scroll-line"></div>
+  </div>
+</section>
+
+<section class="manifesto">
+  <div class="container">
+    <div class="manifesto__label reveal">The Problem</div>
+    <h2 class="manifesto__title reveal" data-delay="1">
+      งาน SA คือ <span class="strike">tribal knowledge</span><br/>
+      ที่ติดอยู่ในหัวคน และในเธรด Slack
+    </h2>
+    <p class="manifesto__body reveal" data-delay="2">
+      Spec ถูกเขียนใหม่ทุกครั้ง · Decision ถูกลืม · คนใหม่ใช้เวลาเป็นสัปดาห์กว่าจะตามทัน ·
+      vendor ถามคำถามเดิมซ้ำๆ · ทีม SA แต่ละทีม reinvent the wheel เพราะไม่มี source of truth ที่ค้นหาได้
+    </p>
+
+    <div class="manifesto__label manifesto__label--accent reveal">Our Answer</div>
+    <h2 class="manifesto__title reveal" data-delay="1">
+      ถอดสมองของทีมออกมาเป็น <em>code</em><br/>
+      แล้วให้ <em>Claude</em> เป็นคนเดินงาน
+    </h2>
+  </div>
+</section>
+
+<section class="pillars">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-head__eyebrow">Three Pillars</span>
+      <h2 class="section-head__title">ระบบนี้ประกอบด้วยสามชั้น</h2>
+    </div>
+
+    <div class="pillars__grid">
+      <article class="pillar reveal" data-delay="1">
+        <div class="pillar__num">01</div>
+        <h3 class="pillar__title">Agents <em>worker layer</em></h3>
+        <p class="pillar__desc">
+          AI ผู้เชี่ยวชาญ <span class="en">15</span> ตัว — <span class="en">spec orchestrator</span> 1, specialist 7,
+          memory keeper 2, supporting 3, <span class="en">skill-to-agent</span> + <span class="en">doc-to-vault</span> สำหรับ extend / import
+          แต่ละตัวรู้หน้าที่ของตัวเองชัดเจน
+        </p>
+        <a class="pillar__link" href="agents/">ดู agent ทั้งหมด →</a>
+      </article>
+
+      <article class="pillar reveal" data-delay="2">
+        <div class="pillar__num">02</div>
+        <h3 class="pillar__title">Skills <em>capability layer</em></h3>
+        <p class="pillar__desc">
+          Skill ระดับ production <span class="en">13</span> ตัว จาก <span class="en">Anthropic</span> และ CEO ของ Obsidian
+          ครอบคลุม PDF, Excel, Word, Obsidian-native authoring, brand guidelines
+        </p>
+        <a class="pillar__link" href="skills/">ดู skill ทั้งหมด →</a>
+      </article>
+
+      <article class="pillar reveal" data-delay="3">
+        <div class="pillar__num">03</div>
+        <h3 class="pillar__title">Memory <em>continuity layer</em></h3>
+        <p class="pillar__desc">
+          <span class="en">Architecture Decision Records</span>, session log, rolling summary
+          ทำให้ทีมไม่เสีย context — ข้ามคน ข้าม session ข้ามเดือนก็จำได้
+        </p>
+        <a class="pillar__link" href="architecture/">ดู architecture →</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="loop">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="section-head__eyebrow">Workflow Loop</span>
+      <h2 class="section-head__title">หนึ่ง prompt เดียว — <em>end-to-end output</em></h2>
+    </div>
+
+    <div class="loop__grid">
+      <div class="loop__step reveal" data-delay="1"><span class="loop__k">01</span><h4>รับโจทย์<span class="en">Capture</span></h4><p>SA พิมพ์ความต้องการเป็นภาษาธรรมชาติ</p></div>
+      <div class="loop__arrow reveal" data-delay="1">→</div>
+      <div class="loop__step reveal" data-delay="2"><span class="loop__k">02</span><h4>กระจายงาน<span class="en">Route</span></h4><p><code>spec-writer</code> เลือก specialist ที่ใช่</p></div>
+      <div class="loop__arrow reveal" data-delay="2">→</div>
+      <div class="loop__step reveal" data-delay="3"><span class="loop__k">03</span><h4>เขียน spec<span class="en">Author</span></h4><p>Specialist เขียน UI / API / backend / report</p></div>
+      <div class="loop__arrow reveal" data-delay="3">→</div>
+      <div class="loop__step reveal" data-delay="4"><span class="loop__k">04</span><h4>ตรวจสอบ<span class="en">Review</span></h4><p><code>spec-reviewer</code> + <code>spec-tester</code> ยืนยัน</p></div>
+      <div class="loop__arrow reveal" data-delay="4">→</div>
+      <div class="loop__step reveal" data-delay="5"><span class="loop__k">05</span><h4>ส่งต่อ<span class="en">Handoff</span></h4><p><code>spec-dev-handoff</code> ห่อ package</p></div>
+      <div class="loop__arrow reveal" data-delay="5">→</div>
+      <div class="loop__step reveal" data-delay="6"><span class="loop__k">06</span><h4>จดจำ<span class="en">Remember</span></h4><p><code>decision-keeper</code> + <code>session-logger</code> เก็บ context</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="quote">
+  <div class="container">
+    <p class="quote__mark reveal">"</p>
+    <blockquote class="reveal" data-delay="1">
+      เราหยุดเขียน spec จากศูนย์<br/>
+      เราเริ่ม <em>direct</em> มันแทน
+    </blockquote>
+    <div class="quote__attr reveal" data-delay="2">— SOLUTION ARCHITECT TEAM</div>
+  </div>
+</section>
+
+<section class="finalcta">
+  <div class="container">
+    <h2 class="finalcta__title reveal">พร้อมให้ทีมคุณมี<br/><em>second brain</em> หรือยัง?</h2>
+    <div class="finalcta__buttons reveal" data-delay="1">
+      <a href="get-started/" class="btn btn--primary btn--lg">เริ่มใช้งาน</a>
+      <a href="demo/" class="btn btn--ghost btn--lg">ดูตัวอย่าง prompt</a>
+    </div>
+    <div class="finalcta__meta reveal" data-delay="2">Built for SA teams · Windows / macOS / Linux · Powered by Claude Code</div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block content %}{% endblock %}
+{% block footer %}{% endblock %}

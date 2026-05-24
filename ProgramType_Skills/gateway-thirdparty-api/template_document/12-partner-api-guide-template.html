@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>API Specification Template | freewillsolutions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --gold:#C8920A;
+  --gold-light:#E5A812;
+  --gold-pale:#FDF6E3;
+  --gold-border:#F0D080;
+  --dark:#1A1410;
+  --mid:#4A3F2F;
+  --soft:#7A6A55;
+  --muted:#B0A08A;
+  --line:#EDE8DF;
+  --bg:#FFFFFF;
+  --bg-warm:#FAFAF8;
+  --bg-section:#F7F4EE;
+  --green:#1A7A4A;
+  --green-bg:#EAF5EE;
+  --red:#A03020;
+  --red-bg:#FAECEA;
+  --blue:#1A4A8A;
+  --blue-bg:#EAF0FB;
+  --amber:#8A5A0A;
+  --amber-bg:#FDF2DC;
+  --radius:8px;
+  --radius-lg:14px;
+  --shadow:0 2px 12px rgba(200,146,10,0.08);
+  --shadow-md:0 4px 24px rgba(200,146,10,0.12);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--dark);
+  font-size:14px;
+  line-height:1.7;
+}
+
+.page-wrap{display:flex;min-height:100vh}
+.sidebar{
+  width:256px;
+  flex-shrink:0;
+  background:var(--bg-warm);
+  border-right:1px solid var(--line);
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+}
+.sidebar-logo{padding:28px 24px 20px;border-bottom:1px solid var(--line)}
+.logo-wrap{display:flex;align-items:center;gap:10px}
+.logo-circle{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.logo-circle svg{width:20px;height:20px}
+.logo-text{font-weight:600;font-size:14px;color:var(--dark)}
+.logo-text span{color:var(--gold)}
+.sidebar-tag{
+  margin-top:10px;
+  display:inline-block;
+  background:var(--gold-pale);
+  border:1px solid var(--gold-border);
+  color:var(--gold);
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  padding:3px 8px;
+  border-radius:4px;
+}
+.sidebar-nav{padding:16px 0;flex:1}
+.nav-section{
+  font-size:10px;font-weight:600;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  padding:8px 24px 4px;
+}
+.nav-item{
+  display:block;
+  padding:7px 24px;
+  font-size:13px;
+  color:var(--soft);
+  text-decoration:none;
+  border-left:2px solid transparent;
+  transition:all .15s;
+}
+.nav-item:hover{color:var(--gold);background:var(--gold-pale);border-left-color:var(--gold)}
+.nav-item.active{color:var(--gold);font-weight:500;border-left-color:var(--gold);background:var(--gold-pale)}
+.sidebar-footer{
+  padding:16px 24px;
+  border-top:1px solid var(--line);
+  font-size:11px;
+  color:var(--muted);
+}
+
+.main{flex:1;min-width:0}
+.topbar{
+  background:var(--bg);
+  border-bottom:1px solid var(--line);
+  padding:16px 48px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.breadcrumb{font-size:12px;color:var(--muted)}
+.breadcrumb span{color:var(--gold);font-weight:500}
+.version-chip,.status-chip{
+  font-size:11px;font-weight:600;
+  padding:3px 10px;border-radius:20px;
+  display:flex;align-items:center;gap:5px;
+}
+.version-chip{
+  background:var(--gold-pale);
+  border:1px solid var(--gold-border);
+  color:var(--gold);
+  font-family:'DM Mono',monospace;
+}
+.status-chip{background:var(--green-bg);border:1px solid #A8DFC0;color:var(--green)}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+
+.content{padding:48px 48px 80px;max-width:900px}
+.hero{
+  background:linear-gradient(135deg,var(--gold-pale) 0%,#FFF8E8 60%,var(--bg) 100%);
+  border:1px solid var(--gold-border);
+  border-radius:var(--radius-lg);
+  padding:40px 44px;
+  margin-bottom:48px;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';
+  position:absolute;
+  right:-40px;top:-40px;
+  width:200px;height:200px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(200,146,10,.08) 0%,transparent 70%);
+}
+.hero-eyebrow{
+  font-size:11px;font-weight:600;
+  color:var(--gold);
+  text-transform:uppercase;letter-spacing:.12em;
+  margin-bottom:10px;
+}
+.hero h1{
+  font-family:'Playfair Display',serif;
+  font-size:32px;
+  color:var(--dark);
+  line-height:1.2;
+  margin-bottom:12px;
+}
+.hero h1 em{color:var(--gold);font-style:normal}
+.hero-sub{font-size:15px;color:var(--soft);max-width:560px;line-height:1.65}
+.hero-meta{display:flex;gap:24px;margin-top:24px;flex-wrap:wrap}
+.hero-meta-item{display:flex;flex-direction:column;gap:2px}
+.hero-meta-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.hero-meta-value{font-size:13px;font-weight:500;color:var(--dark);font-family:'DM Mono',monospace}
+
+.section{margin-bottom:52px;scroll-margin-top:80px;opacity:0;transform:translateY(12px);transition:opacity .35s,transform .35s}
+.section.visible{opacity:1;transform:translateY(0)}
+.section-title{
+  font-family:'Playfair Display',serif;
+  font-size:22px;
+  color:var(--dark);
+  margin-bottom:6px;
+  display:flex;align-items:center;gap:10px;
+}
+.section-num{
+  width:28px;height:28px;border-radius:50%;
+  background:var(--gold);
+  color:#fff;
+  font-family:'DM Mono',monospace;
+  font-size:12px;font-weight:500;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.section-divider{
+  height:2px;
+  background:linear-gradient(90deg,var(--gold) 0%,var(--gold-border) 40%,transparent 100%);
+  margin-bottom:24px;
+}
+.section-desc{color:var(--soft);margin-bottom:20px}
+.subsection{margin-top:22px}
+.subsection h3{font-size:15px;color:var(--mid);margin-bottom:10px}
+
+.info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+.info-card{
+  background:var(--bg-warm);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:16px;
+}
+.info-card-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.info-card-value{font-family:'DM Mono',monospace;font-size:13px;color:var(--dark)}
+.info-card-note{font-size:12px;color:var(--soft);margin-top:6px}
+
+.highlight-box,.callout{
+  border-radius:var(--radius);
+  padding:16px 18px;
+  margin:18px 0;
+  font-size:13px;
+}
+.highlight-box{background:var(--gold-pale);border:1px solid var(--gold-border);color:var(--mid)}
+.callout{display:flex;gap:12px;align-items:flex-start}
+.callout.green{background:var(--green-bg);border:1px solid #A8DFC0;color:var(--green)}
+.callout.amber{background:var(--amber-bg);border:1px solid #E8C980;color:var(--amber)}
+.callout-icon{font-size:16px;line-height:1.4}
+
+.table-wrap{overflow-x:auto;margin-bottom:16px;border-radius:var(--radius);box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead{background:var(--gold);color:#fff}
+th{padding:10px 14px;text-align:left;font-weight:500;white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--line)}
+tbody tr:last-child{border-bottom:none}
+tbody tr:nth-child(even){background:var(--bg-warm)}
+tbody td{padding:10px 14px;vertical-align:top;line-height:1.5}
+.td-mono{font-family:'DM Mono',monospace;font-size:12px;color:var(--mid)}
+code{
+  font-family:'DM Mono',monospace;
+  background:var(--gold-pale);
+  color:var(--gold);
+  padding:1px 5px;
+  border-radius:4px;
+  font-size:.92em;
+}
+.tag-req,.tag-opt,.tag-get,.tag-post,.tag-put,.tag-delete,.plain-badge,.enc-badge,.tag-400,.tag-401,.tag-404,.tag-500{
+  display:inline-block;
+  padding:2px 7px;
+  border-radius:4px;
+  font-size:10px;
+  font-weight:600;
+  font-family:'DM Mono',monospace;
+}
+.tag-req{background:var(--red-bg);color:var(--red)}
+.tag-opt{background:var(--bg-section);color:var(--soft)}
+.tag-get{background:var(--green-bg);color:var(--green)}
+.tag-post{background:var(--blue-bg);color:var(--blue)}
+.tag-put{background:var(--amber-bg);color:var(--amber)}
+.tag-delete{background:var(--red-bg);color:var(--red)}
+.plain-badge{background:var(--blue-bg);color:var(--blue)}
+.enc-badge{background:var(--amber-bg);color:var(--amber)}
+.tag-400,.tag-401{background:var(--amber-bg);color:var(--amber)}
+.tag-404{background:var(--blue-bg);color:var(--blue)}
+.tag-500{background:var(--red-bg);color:var(--red)}
+
+.endpoint-card{
+  border:1px solid var(--line);
+  border-radius:var(--radius-lg);
+  margin-bottom:24px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.endpoint-header{
+  background:var(--bg-warm);
+  border-bottom:1px solid var(--line);
+  padding:14px 18px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.endpoint-path{font-family:'DM Mono',monospace;font-size:13px;color:var(--dark)}
+.endpoint-desc{color:var(--soft);font-size:12px}
+.endpoint-body{padding:20px}
+
+.code-block{
+  background:#1E1A16;
+  border-radius:var(--radius);
+  overflow:hidden;
+  margin:14px 0 18px;
+  box-shadow:var(--shadow-md);
+}
+.code-header{
+  background:#2A241E;
+  padding:8px 14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid #3A3028;
+}
+.code-lang{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace}
+.code-dots{display:flex;gap:6px}
+.code-dot{width:10px;height:10px;border-radius:50%}
+.dot-r{background:#E06C75}.dot-y{background:#E5C07B}.dot-g{background:#98C379}
+pre{
+  margin:0;
+  padding:18px;
+  overflow-x:auto;
+  font-family:'DM Mono',monospace;
+  font-size:12px;
+  line-height:1.65;
+  color:#EDE8DF;
+}
+.c-gold{color:#E5A812}.c-str{color:#98C379}.c-blue{color:#61AFEF}.c-num{color:#D19A66}.c-gray{color:#7A6A55}
+
+@media(max-width:860px){
+  .page-wrap{display:block}
+  .sidebar{position:relative;width:100%;height:auto}
+  .sidebar-nav{display:none}
+  .topbar{padding:14px 20px;position:relative;align-items:flex-start;gap:10px;flex-direction:column}
+  .content{padding:28px 20px 56px}
+  .hero{padding:28px 24px}
+  .hero h1{font-size:28px}
+  .info-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-wrap">
+        <div class="logo-circle">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M7 12.5L10.5 16L17.5 8" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="logo-text">freewill<span>solutions</span></div>
+      </div>
+      <span class="sidebar-tag">Template</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">Overview</div>
+      <a class="nav-item active" href="#overview">Introduction</a>
+      <a class="nav-item" href="#base-url">Base URL</a>
+      <a class="nav-item" href="#flow">Request Flow</a>
+
+      <div class="nav-section">Security</div>
+      <a class="nav-item" href="#auth">Authentication</a>
+      <a class="nav-item" href="#headers">Request Headers</a>
+
+      <div class="nav-section">API Contract</div>
+      <a class="nav-item" href="#endpoints">Endpoints</a>
+      <a class="nav-item" href="#response-headers">Response Headers</a>
+      <a class="nav-item" href="#data-protection">Data Protection</a>
+      <a class="nav-item" href="#errors">Error Codes</a>
+      <a class="nav-item" href="#examples">Request Examples</a>
+    </nav>
+
+    <div class="sidebar-footer">Prepared by freewillsolutions</div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="breadcrumb">Documentation / <span>Partner API Specification</span></div>
+        <div class="version-chip">v[version]</div>
+      </div>
+      <div class="status-chip"><span class="status-dot"></span> Draft</div>
+    </div>
+
+    <div class="content">
+      <section class="hero" id="overview">
+        <div class="hero-eyebrow">Partner Integration</div>
+        <h1>[Project Name]<br/><em>API Specification</em></h1>
+        <p class="hero-sub">Technical reference template for partner integration. Replace bracketed placeholders with project-specific details.</p>
+        <div class="hero-meta">
+          <div class="hero-meta-item">
+            <span class="hero-meta-label">API Version</span>
+            <span class="hero-meta-value">[version]</span>
+          </div>
+          <div class="hero-meta-item">
+            <span class="hero-meta-label">Base Path</span>
+            <span class="hero-meta-value">/[base-path]</span>
+          </div>
+          <div class="hero-meta-item">
+            <span class="hero-meta-label">Auth</span>
+            <span class="hero-meta-value">[auth-method]</span>
+          </div>
+          <div class="hero-meta-item">
+            <span class="hero-meta-label">Protocol</span>
+            <span class="hero-meta-value">HTTPS / TLS 1.2+</span>
+          </div>
+          <div class="hero-meta-item">
+            <span class="hero-meta-label">Format</span>
+            <span class="hero-meta-value">JSON (UTF-8)</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="base-url">
+        <div class="section-title"><span class="section-num">1</span> Base URL</div>
+        <div class="section-divider"></div>
+        <p class="section-desc">Specify the environment URLs and base path used by partner systems.</p>
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="info-card-label">Production</div>
+            <div class="info-card-value">https://[production-domain]</div>
+            <div class="info-card-note">Production endpoint for live transactions</div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-label">Sandbox / UAT</div>
+            <div class="info-card-value">https://[sandbox-domain]</div>
+            <div class="info-card-note">Testing endpoint before production release</div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-label">Base Path</div>
+            <div class="info-card-value">/[base-path]</div>
+            <div class="info-card-note">All endpoints are prefixed with this path</div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-label">Content Type</div>
+            <div class="info-card-value">application/json</div>
+            <div class="info-card-note">Request and response payload format</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="flow">
+        <div class="section-title"><span class="section-num">2</span> Request Flow</div>
+        <div class="section-divider"></div>
+        <p class="section-desc">Describe the high-level request and response sequence between the partner system and freewillsolutions services.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Step</th><th>Actor</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td class="td-mono">1</td><td>[Partner]</td><td>[Prepare request payload, headers, and authentication details]</td></tr>
+              <tr><td class="td-mono">2</td><td>[API Gateway]</td><td>[Validate authentication, headers, schema, and request timestamp]</td></tr>
+              <tr><td class="td-mono">3</td><td>[Service]</td><td>[Process request and retrieve or update required data]</td></tr>
+              <tr><td class="td-mono">4</td><td>[API Gateway]</td><td>[Return standardized response, trace ID, and status code]</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="auth">
+        <div class="section-title"><span class="section-num">3</span> Authentication</div>
+        <div class="section-divider"></div>
+        <p class="section-desc">Define the authentication method required for all protected endpoints.</p>
+        <div class="highlight-box">
+          <p><strong>Authentication method:</strong> [Describe API key, OAuth 2.0, mTLS, HMAC signature, or another required mechanism.]</p>
+        </div>
+        <div class="subsection">
+          <h3>Credential Format</h3>
+          <div class="code-block">
+            <div class="code-header"><span class="code-lang">Header</span><div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div></div>
+            <pre>[Authorization-Header]: [credential-format]</pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="headers">
+        <div class="section-title"><span class="section-num">4</span> Request Headers</div>
+        <div class="section-divider"></div>
+        <p class="section-desc">List every required and optional request header.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Header</th><th>Required</th><th>Description</th><th>Example</th></tr></thead>
+            <tbody>
+              <tr><td class="td-mono">[Auth Header]</td><td><span class="tag-req">REQUIRED</span></td><td>[Authentication credential]</td><td><code>[credential]</code></td></tr>
+              <tr><td class="td-mono">X-Client-Id</td><td><span class="tag-req">REQUIRED</span></td><td>[Client or system identifier]</td><td><code>[client-id]</code></td></tr>
+              <tr><td class="td-mono">X-Request-Id</td><td><span class="tag-req">REQUIRED</span></td><td>[Unique request ID for idempotency or tracing]</td><td><code>[uuid]</code></td></tr>
+              <tr><td class="td-mono">X-Correlation-Id</td><td><span class="tag-opt">OPTIONAL</span></td><td>[Business transaction reference]</td><td><code>[transaction-id]</code></td></tr>
+              <tr><td class="td-mono">X-Timestamp</td><td><span class="tag-req">REQUIRED</span></td><td>[Request timestamp in ISO 8601 format]</td><td><code>[timestamp]</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="endpoints">
+        <div class="section-title"><span class="section-num">5</span> Endpoints</div>
+        <div class="section-divider"></div>
+        <p class="section-desc">Document each API endpoint contract. Duplicate this endpoint card for additional APIs.</p>
+
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <span class="tag-get">GET</span>
+            <span class="endpoint-path">/[base-path]/[resource]</span>
+            <span class="endpoint-desc">[Short endpoint description]</span>
+          </div>
+          <div class="endpoint-body">
+            <p style="font-size:13px;color:var(--soft);margin-bottom:16px">[Describe the endpoint purpose, business rule, and expected behavior.]</p>
+
+            <div class="subsection">
+              <h3>Query Parameters</h3>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Parameter</th><th>Required</th><th>Type</th><th>Description</th></tr></thead>
+                  <tbody>
+                    <tr><td class="td-mono">[parameter_name]</td><td><span class="tag-req">REQUIRED</span></td><td>[type]</td><td>[Description and validation rule]</td></tr>
+                    <tr><td class="td-mono">[optional_parameter]</td><td><span class="tag-opt">OPTIONAL</span></td><td>[type]</td><td>[Description and default behavior]</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="subsection">
+              <h3>Request Body</h3>
+              <div class="code-block">
+                <div class="code-header"><span class="code-lang">JSON</span><div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div></div>
+                <pre>{
+  <span class="c-gold">"[field]"</span>: <span class="c-str">"[value]"</span>
+}</pre>
+              </div>
+            </div>
+
+            <div class="subsection">
+              <h3>Response Fields - 200 OK</h3>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+                  <tbody>
+                    <tr><td class="td-mono">success</td><td>boolean</td><td><span class="tag-req">REQUIRED</span></td><td>[Success status]</td></tr>
+                    <tr><td class="td-mono">data</td><td>object</td><td><span class="tag-opt">OPTIONAL</span></td><td>[Response payload]</td></tr>
+                    <tr><td class="td-mono">message</td><td>string</td><td><span class="tag-opt">OPTIONAL</span></td><td>[Human-readable message]</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="subsection">
+              <h3>Example Response</h3>
+              <div class="code-block">
+                <div class="code-header"><span class="code-lang">JSON - 200 OK</span><div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div></div>
+                <pre>{
+  <span class="c-gold">"success"</span>: <span class="c-blue">true</span>,
+  <span class="c-gold">"data"</span>: {
+    <span class="c-gold">"[field]"</span>: <span class="c-str">"[value]"</span>
+  }
+}</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="response-headers">
+        <div class="section-title"><span class="section-num">6</span> Response Headers</div>
+        <div class="section-divider"></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Header</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td class="td-mono">X-Trace-Id</td><td>[Unique trace ID for support and internal investigation]</td></tr>
+              <tr><td class="td-mono">X-Request-Id</td><td>[Echo of the request ID supplied by the caller]</td></tr>
+              <tr><td class="td-mono">X-Response-Time</td><td>[API processing time]</td></tr>
+              <tr><td class="td-mono">X-Api-Version</td><td>[API version that processed the request]</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="data-protection">
+        <div class="section-title"><span class="section-num">7</span> Data Protection</div>
+        <div class="section-divider"></div>
+        <p class="section-desc">Describe encryption, masking, signing, data retention, or privacy rules that apply to sensitive fields.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Field / Scope</th><th>Protection</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr><td class="td-mono">[field_name]</td><td><span class="enc-badge">Protected</span></td><td>[Encryption, masking, or handling rule]</td></tr>
+              <tr><td class="td-mono">[field_name]</td><td><span class="plain-badge">Plain</span></td><td>[Reason this field can be returned as plain text]</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="errors">
+        <div class="section-title"><span class="section-num">8</span> Error Codes</div>
+        <div class="section-divider"></div>
+        <p class="section-desc">Define the common error response structure and status codes.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">Error Response Format</span><div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div></div>
+          <pre>{
+  <span class="c-gold">"success"</span>: <span class="c-blue">false</span>,
+  <span class="c-gold">"error"</span>: <span class="c-str">"[error-code]"</span>,
+  <span class="c-gold">"message"</span>: <span class="c-str">"[error-message]"</span>
+}</pre>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Status</th><th>Error</th><th>Cause</th><th>Resolution</th></tr></thead>
+            <tbody>
+              <tr><td><span class="tag-400">400</span></td><td>Bad Request</td><td>[Invalid or missing request data]</td><td>[Correct request fields, headers, or schema]</td></tr>
+              <tr><td><span class="tag-401">401</span></td><td>Unauthorized</td><td>[Missing or invalid credentials]</td><td>[Verify authentication details]</td></tr>
+              <tr><td><span class="tag-404">404</span></td><td>Not Found</td><td>[Resource not found]</td><td>[Verify requested resource identifier]</td></tr>
+              <tr><td><span class="tag-500">500</span></td><td>Internal Server Error</td><td>[Unexpected server-side error]</td><td>[Retry or contact support with trace ID]</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="examples">
+        <div class="section-title"><span class="section-num">9</span> Request Examples</div>
+        <div class="section-divider"></div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">cURL</span><div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div></div>
+          <pre>curl -X [METHOD] \
+  <span class="c-str">"https://[domain]/[base-path]/[resource]"</span> \
+  -H <span class="c-str">"[Auth Header]: [credential]"</span> \
+  -H <span class="c-str">"X-Client-Id: [client-id]"</span> \
+  -H <span class="c-str">"X-Request-Id: [uuid]"</span> \
+  -H <span class="c-str">"X-Timestamp: [timestamp]"</span></pre>
+        </div>
+        <div class="callout green">
+          <span class="callout-icon">OK</span>
+          <div><strong>Support:</strong> For technical assistance, contact your freewillsolutions integration representative and include <code>X-Trace-Id</code> and <code>X-Request-Id</code>.</div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script>
+const sections = document.querySelectorAll('.section');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
+sections.forEach(section => observer.observe(section));
+
+const navItems = document.querySelectorAll('.nav-item');
+const allSections = document.querySelectorAll('.section[id]');
+window.addEventListener('scroll', () => {
+  let current = 'overview';
+  allSections.forEach(section => {
+    if (window.scrollY >= section.offsetTop - 120) current = section.id;
+  });
+  navItems.forEach(item => {
+    item.classList.toggle('active', item.getAttribute('href') === '#' + current);
+  });
+}, { passive: true });
+</script>
+</body>
+</html>

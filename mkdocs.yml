@@ -1,0 +1,92 @@
+site_name: SA Knowledge System
+site_description: An operating system for SA sub-teams — 14 AI agents, 13 skills, one living memory layer · one vault per sub-team
+site_url: https://zayntrpw.github.io/sa-knowledge-system/
+repo_url: https://github.com/ZaynTRPW/sa-knowledge-system
+repo_name: ZaynTRPW/sa-knowledge-system
+
+docs_dir: docs
+
+theme:
+  name: material
+  language: en
+  custom_dir: overrides
+  palette:
+    scheme: slate
+    primary: black
+    accent: amber
+  font:
+    text: Inter Tight
+    code: JetBrains Mono
+  features:
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
+    logo: material/star-four-points
+
+extra_css:
+  - stylesheets/cinematic.css
+
+extra_javascript:
+  - javascripts/cinematic.js
+  - javascripts/mermaid-init.js
+  - https://unpkg.com/mermaid@10/dist/mermaid.min.js
+
+plugins:
+  - search:
+      lang:
+        - en
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: "¶"
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+nav:
+  - Home: index.md
+  - Agents: agents.md
+  - Agent Internals: agent-internals.md
+  - Skills: skills.md
+  - Architecture: architecture.md
+  - Auto-sync: auto-sync.md
+  - Get Started: get-started.md
+  - Demo: demo.md
+  - What's Next: roadmap.md
+  - Changelog: changelog.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/ZaynTRPW/sa-knowledge-system
+  generator: false

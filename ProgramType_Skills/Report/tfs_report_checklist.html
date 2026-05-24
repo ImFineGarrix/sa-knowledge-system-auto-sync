@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TFS Report — Checklist ขั้นตอนที่ 1</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F7F6F2;
+    --surface: #FFFFFF;
+    --surface2: #F0EEE9;
+    --border: #E2DDD6;
+    --border-strong: #C8C2B8;
+    --text: #1A1714;
+    --text-muted: #6B6560;
+    --text-faint: #9E9890;
+    --accent: #1B4FD8;
+    --accent-bg: #EEF2FD;
+    --accent-border: #AABCF0;
+    --req-bg: #FEF0EC;
+    --req-text: #9C3319;
+    --req-border: #F5C4B0;
+    --opt-bg: #FEF6E6;
+    --opt-text: #8A5210;
+    --opt-border: #F5D99A;
+    --success-bg: #EDF7F2;
+    --success-text: #1A6B3C;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+    --shadow-lg: 0 2px 8px rgba(0,0,0,0.08), 0 12px 32px rgba(0,0,0,0.06);
+  }
+
+  body {
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+    line-height: 1.6;
+  }
+
+  .wrapper {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .page-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .page-title {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+    letter-spacing: -0.3px;
+  }
+  .page-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  /* Progress indicator */
+  .progress-strip {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .step-pill {
+    flex: 1;
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-align: center;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+  .step-pill:last-child { border-right: none; }
+  .step-pill.active {
+    background: var(--accent-bg);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .step-pill .step-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    display: block;
+    margin-bottom: 1px;
+    opacity: 0.6;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.875rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .card-subtitle {
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+
+  /* Form fields */
+  .field-grid { display: grid; gap: 14px; }
+  .col-2 { grid-template-columns: 1fr 1fr; }
+  .col-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .field-hint {
+    font-size: 11px;
+    color: var(--text-faint);
+    line-height: 1.4;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 9px 12px;
+    font-size: 13px;
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    appearance: none;
+  }
+  input[type="text"]:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent-border);
+    box-shadow: 0 0 0 3px rgba(27,79,216,0.08);
+  }
+  input::placeholder, textarea::placeholder { color: var(--text-faint); }
+  textarea { resize: vertical; min-height: 80px; line-height: 1.55; }
+  select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239E9890' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+
+  /* Badges */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+  }
+  .badge-req { background: var(--req-bg); color: var(--req-text); border: 1px solid var(--req-border); }
+  .badge-opt { background: var(--opt-bg); color: var(--opt-text); border: 1px solid var(--opt-border); }
+
+  /* Multi-select chips */
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    background: var(--surface);
+    color: var(--text-muted);
+    transition: all 0.12s;
+    user-select: none;
+  }
+  .chip:hover { border-color: var(--border-strong); color: var(--text); }
+  .chip.selected {
+    background: var(--accent-bg);
+    border-color: var(--accent-border);
+    color: var(--accent);
+  }
+
+  /* TBD note */
+  .tbd-note {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+  }
+  .tbd-note strong { color: var(--text); }
+
+  /* Generate button */
+  .generate-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    margin-top: 1.5rem;
+  }
+  .generate-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .generate-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+  .btn-primary {
+    width: 100%;
+    padding: 13px 20px;
+    background: var(--text);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.01em;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn-primary:hover { background: #2c2c2c; }
+  .btn-primary:active { transform: scale(0.99); }
+  .btn-secondary {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 13px;
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.12s;
+  }
+  .btn-secondary:hover { background: var(--surface2); color: var(--text); }
+
+  /* Output area */
+  .output-section {
+    display: none;
+    margin-top: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .output-section.show { display: block; }
+  .output-header {
+    padding: 12px 16px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .output-header-title { font-size: 12px; font-weight: 600; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; }
+  .btn-copy {
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+    transition: all 0.12s;
+  }
+  .btn-copy:hover { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); }
+  .btn-copy.copied { background: var(--success-bg); color: var(--success-text); border-color: #9DD4B8; }
+  pre#output-text {
+    padding: 1.25rem 1.5rem;
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    line-height: 1.7;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 480px;
+    overflow-y: auto;
+    background: var(--surface);
+  }
+
+  /* Required indicator */
+  .req-indicator {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--req-text);
+    margin-left: 3px;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+  }
+
+  @media (max-width: 600px) {
+    .col-2, .col-3 { grid-template-columns: 1fr; }
+    .progress-strip { display: none; }
+    body { padding: 1rem 0.75rem 3rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="page-header">
+    <div class="page-label">spec_report / ขั้นตอนที่ 1</div>
+    <div class="page-title">Checklist ข้อมูล TFS Report</div>
+    <div class="page-desc">กรอกข้อมูลทั้ง 14 รายการ แล้วกด "สร้าง Prompt" เพื่อ copy ไปวางใน Claude ได้เลย<br>รายการที่ไม่กรอก จะถูกใส่ <code>[TBD]</code> ให้อัตโนมัติ</div>
+  </div>
+
+  <div class="progress-strip">
+    <div class="step-pill active">
+      <span class="step-num">STEP 1</span>
+      กรอกข้อมูล Checklist
+    </div>
+    <div class="step-pill">
+      <span class="step-num">STEP 2</span>
+      Copy Prompt → Claude
+    </div>
+    <div class="step-pill">
+      <span class="step-num">STEP 3</span>
+      Review TFS ที่ได้
+    </div>
+    <div class="step-pill">
+      <span class="step-num">STEP 4</span>
+      บันทึก .md / ส่ง Dev
+    </div>
+  </div>
+
+  <!-- Card 1: Basic Info -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">01</div>
+      <div>
+        <div class="card-title">ข้อมูลพื้นฐาน</div>
+        <div class="card-subtitle">รายการ 1–5 | จำเป็นทั้งหมด</div>
+      </div>
+    </div>
+    <div class="field-grid">
+      <div class="field-grid col-2">
+        <div class="field">
+          <label>Report ID <span class="badge badge-req">จำเป็น</span></label>
+          <input type="text" id="f_id" placeholder="เช่น RPT-001, CONF-002" />
+          <span class="field-hint">รหัสรายงานในระบบ</span>
+        </div>
+        <div class="field">
+          <label>ประเภทงาน <span class="badge badge-req">จำเป็น</span></label>
+          <select id="f_type">
+            <option value="">— เลือกประเภทงาน —</option>
+            <option value="สร้างใหม่">สร้างใหม่</option>
+            <option value="แก้ไขระบบเดิม">แก้ไขระบบเดิม</option>
+            <option value="Convert Technology">Convert Technology</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-grid col-2">
+        <div class="field">
+          <label>ชื่อรายงาน (ภาษาไทย) <span class="badge badge-req">จำเป็น</span></label>
+          <input type="text" id="f_name_th" placeholder="เช่น รายงานยืนยันการซื้อขาย" />
+        </div>
+        <div class="field">
+          <label>ชื่อรายงาน (ภาษาอังกฤษ) <span class="badge badge-req">จำเป็น</span></label>
+          <input type="text" id="f_name_en" placeholder="เช่น Daily Trade Confirmation" />
+        </div>
+      </div>
+      <div class="field-grid col-2">
+        <div class="field">
+          <label>Technology / Report Engine <span class="badge badge-req">จำเป็น</span></label>
+          <select id="f_tech">
+            <option value="">— เลือก Technology —</option>
+            <option>xdocReport</option>
+            <option>JasperReport</option>
+            <option>RDLC</option>
+            <option>SSRS</option>
+            <option>Excel POI</option>
+            <option>Crystal Report</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>ผู้ใช้งาน (Audience) <span class="badge badge-req">จำเป็น</span></label>
+          <select id="f_audience">
+            <option value="">— เลือกผู้ใช้งาน —</option>
+            <option>Back office</option>
+            <option>ลูกค้า</option>
+            <option>ผู้บริหาร</option>
+            <option>ผู้กำกับดูแล (Regulator)</option>
+            <option>Back office และลูกค้า</option>
+            <option>อื่นๆ</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Output Format <span class="badge badge-req">จำเป็น</span></label>
+        <div class="chips" id="chips_output">
+          <div class="chip" onclick="toggleChip(this)">PDF</div>
+          <div class="chip" onclick="toggleChip(this)">Excel (.xlsx)</div>
+          <div class="chip" onclick="toggleChip(this)">CSV</div>
+          <div class="chip" onclick="toggleChip(this)">On-screen</div>
+          <div class="chip" onclick="toggleChip(this)">PDF + Excel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Input & Layout -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">02</div>
+      <div>
+        <div class="card-title">Input Parameters & Layout</div>
+        <div class="card-subtitle">รายการ 6–8 | จำเป็นทั้งหมด</div>
+      </div>
+    </div>
+    <div class="field-grid">
+      <div class="field">
+        <label>Filter / Parameter ที่รับ <span class="badge badge-req">จำเป็น</span></label>
+        <input type="text" id="f_params" placeholder="เช่น วันที่เริ่ม, วันที่สิ้นสุด, รหัสบัญชี, สาขา" />
+        <span class="field-hint">ระบุทุก parameter ที่ user กรอกก่อนออก report</span>
+      </div>
+      <div class="field">
+        <label>Layout / โครงสร้างรายงาน <span class="badge badge-req">จำเป็น</span></label>
+        <textarea id="f_layout" placeholder="อธิบาย Header / Body / Footer&#10;เช่น&#10;Header: ชื่อบริษัท, ชื่อรายงาน, วันที่พิมพ์&#10;Body: ตารางรายการซื้อขาย&#10;Footer: ลายเซ็น, หน้าที่ X/Y"></textarea>
+        <span class="field-hint">แนบ mock-up หรืออธิบายโครงสร้างโดยละเอียด</span>
+      </div>
+      <div class="field">
+        <label>Columns ที่แสดงในรายงาน <span class="badge badge-req">จำเป็น</span></label>
+        <textarea id="f_columns" placeholder="เรียงจากซ้ายไปขวา เช่น&#10;1. วันที่ (DATE, DD/MM/YYYY)&#10;2. เลขที่บัญชี (VARCHAR)&#10;3. ชื่อหลักทรัพย์ (VARCHAR)&#10;4. จำนวนหน่วย (INT)&#10;5. ราคา (DECIMAL, #,##0.00)&#10;6. มูลค่าสุทธิ (DECIMAL, คำนวณ = จำนวน × ราคา)"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: Business Logic -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">03</div>
+      <div>
+        <div class="card-title">Business Logic & Data</div>
+        <div class="card-subtitle">รายการ 9–12 | ถ้าไม่มีจะใส่ [TBD] ให้</div>
+      </div>
+    </div>
+    <div class="field-grid">
+      <div class="field">
+        <label>Business Rule / สูตรคำนวณ <span class="badge badge-opt">แนะนำ</span></label>
+        <textarea id="f_rules" placeholder="เช่น&#10;- Net Amount = Buy Amount - Commission - VAT&#10;- แสดงเฉพาะรายการที่ Status = 'SETTLED'&#10;- ถ้า Type = 'BUY' ให้แสดงสีดำ, 'SELL' ให้แสดงสีแดง"></textarea>
+      </div>
+      <div class="field">
+        <label>Data Source <span class="badge badge-opt">แนะนำ</span></label>
+        <input type="text" id="f_datasource" placeholder="เช่น SP_RPT_TRADE_CONFIRM, VIEW_TRADE_SUMMARY, T_ORDER_HEADER" />
+        <span class="field-hint">ชื่อ Stored Procedure, View, หรือ Table หลัก</span>
+      </div>
+      <div class="field-grid col-2">
+        <div class="field">
+          <label>Grouping / Sorting <span class="badge badge-opt">แนะนำ</span></label>
+          <input type="text" id="f_group" placeholder="เช่น Group by บัญชี, Sort วันที่ ASC" />
+        </div>
+        <div class="field">
+          <label>Subtotal / Summary <span class="badge badge-opt">แนะนำ</span></label>
+          <input type="text" id="f_subtotal" placeholder="เช่น Subtotal ต่อบัญชี, Grand Total ท้ายรายงาน" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4: Output & Schedule -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">04</div>
+      <div>
+        <div class="card-title">Output & Schedule</div>
+        <div class="card-subtitle">รายการ 13–14 | ถ้าไม่มีจะใส่ [TBD] ให้</div>
+      </div>
+    </div>
+    <div class="field-grid">
+      <div class="field-grid col-2">
+        <div class="field">
+          <label>Output File Naming <span class="badge badge-opt">แนะนำ</span></label>
+          <input type="text" id="f_filename" placeholder="เช่น DAILY_CONFIRM_YYYYMMDD.pdf" />
+        </div>
+        <div class="field">
+          <label>Destination Path <span class="badge badge-opt">แนะนำ</span></label>
+          <input type="text" id="f_destpath" placeholder="เช่น /output/reports/confirm/" />
+        </div>
+      </div>
+      <div class="field-grid col-2">
+        <div class="field">
+          <label>Frequency / Trigger <span class="badge badge-opt">แนะนำ</span></label>
+          <select id="f_freq">
+            <option value="">— เลือกความถี่ —</option>
+            <option>On-demand (ผู้ใช้รันเอง)</option>
+            <option>Daily Batch (รันอัตโนมัติทุกวัน)</option>
+            <option>Scheduled — ระบุเวลาใน Note</option>
+            <option>End of Day (EOD)</option>
+            <option>Monthly</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Paper Size / Orientation <span class="badge badge-opt">แนะนำ</span></label>
+          <select id="f_paper">
+            <option value="">— เลือก —</option>
+            <option>A4 Portrait</option>
+            <option>A4 Landscape</option>
+            <option>A3 Portrait</option>
+            <option>A3 Landscape</option>
+            <option>Letter Portrait</option>
+            <option>N/A (ไม่มีการพิมพ์)</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>หมายเหตุ / ข้อมูลเพิ่มเติม</label>
+        <textarea id="f_note" rows="2" placeholder="ข้อมูลอื่นๆ ที่อยากให้ AI ทราบก่อนสร้าง TFS"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Generate Section -->
+  <div class="generate-section">
+    <div class="generate-title">สร้าง Prompt สำหรับ Claude</div>
+    <div class="generate-desc">
+      กดปุ่มด้านล่างเพื่อ generate prompt ที่พร้อม copy → วางใน Claude แล้วพิมพ์ Enter เพื่อรับ TFS ทันที
+    </div>
+    <button class="btn-primary" onclick="generatePrompt()">▶  สร้าง Prompt</button>
+    <button class="btn-secondary" onclick="clearAll()">ล้างข้อมูลทั้งหมด</button>
+  </div>
+
+  <!-- Output -->
+  <div class="output-section" id="output-section">
+    <div class="output-header">
+      <span class="output-header-title">PROMPT — พร้อม copy ไปวางใน Claude</span>
+      <button class="btn-copy" id="btn-copy" onclick="copyOutput()">Copy</button>
+    </div>
+    <pre id="output-text"></pre>
+  </div>
+
+</div>
+
+<script>
+  function toggleChip(el) {
+    el.classList.toggle('selected');
+  }
+
+  function v(id) {
+    var el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  }
+
+  function getChips(containerId) {
+    var chips = document.querySelectorAll('#' + containerId + ' .chip.selected');
+    var vals = [];
+    chips.forEach(function(c) { vals.push(c.textContent.trim()); });
+    return vals.length > 0 ? vals.join(', ') : '';
+  }
+
+  function tbd(val) {
+    return val || '[TBD]';
+  }
+
+  function generatePrompt() {
+    var id       = v('f_id');
+    var type_    = v('f_type');
+    var nameTH   = v('f_name_th');
+    var nameEN   = v('f_name_en');
+    var tech     = v('f_tech');
+    var audience = v('f_audience');
+    var output   = getChips('chips_output');
+    var params   = v('f_params');
+    var layout   = v('f_layout');
+    var columns  = v('f_columns');
+    var rules    = v('f_rules');
+    var ds       = v('f_datasource');
+    var group    = v('f_group');
+    var subtotal = v('f_subtotal');
+    var fname    = v('f_filename');
+    var fpath    = v('f_destpath');
+    var freq     = v('f_freq');
+    var paper    = v('f_paper');
+    var note     = v('f_note');
+
+    if (!nameTH && !nameEN && !id) {
+      alert('กรุณาระบุชื่อรายงาน หรือ Report ID ก่อน');
+      return;
+    }
+
+    var fileSpec = '';
+    if (fname || fpath) {
+      fileSpec = (tbd(fname)) + (fpath ? ' → ' + fpath : '');
+    }
+
+    var lines = [
+      '/spec_report กรุณาสร้าง TFS Report จากข้อมูลด้านล่าง',
+      '',
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+      'CHECKLIST ขั้นตอนที่ 1 — ข้อมูลจาก SA',
+      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+      '',
+      '1.  Report ID          : ' + tbd(id),
+      '    ชื่อ (TH)          : ' + tbd(nameTH),
+      '    ชื่อ (EN)          : ' + tbd(nameEN),
+      '2.  ประเภทงาน          : ' + tbd(type_),
+      '3.  Technology         : ' + tbd(tech),
+      '4.  Output Format      : ' + tbd(output),
+      '5.  Audience           : ' + tbd(audience),
+      '6.  Filter / Parameter : ' + tbd(params),
+      '7.  Layout             :',
+           layout ? layout.split('\n').map(function(l){ return '    ' + l; }).join('\n') : '    [TBD]',
+      '8.  Columns            :',
+           columns ? columns.split('\n').map(function(l){ return '    ' + l; }).join('\n') : '    [TBD]',
+      '9.  Business Rule      :',
+           rules ? rules.split('\n').map(function(l){ return '    ' + l; }).join('\n') : '    [TBD]',
+      '10. Data Source        : ' + tbd(ds),
+      '11. Grouping / Sorting : ' + tbd(group),
+      '12. Subtotal / Summary : ' + tbd(subtotal),
+      '13. File Naming & Dest : ' + (fileSpec || '[TBD]'),
+      '14. Frequency / Trigger: ' + tbd(freq),
+      '    Paper Size         : ' + tbd(paper),
+    ];
+
+    if (note) {
+      lines.push('');
+      lines.push('หมายเหตุ:');
+      note.split('\n').forEach(function(l){ lines.push('    ' + l); });
+    }
+
+    lines.push('');
+    lines.push('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    lines.push('กรุณา generate TFS ตาม Template Standard ให้ครบทุก Section');
+    lines.push('รายการที่เป็น [TBD] ให้ระบุไว้ใน Section 8 Pending Items');
+
+    var prompt = lines.join('\n');
+    document.getElementById('output-text').textContent = prompt;
+    document.getElementById('output-section').classList.add('show');
+    document.getElementById('btn-copy').textContent = 'Copy';
+    document.getElementById('btn-copy').classList.remove('copied');
+    document.getElementById('output-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function copyOutput() {
+    var text = document.getElementById('output-text').textContent;
+    navigator.clipboard.writeText(text).then(function() {
+      var btn = document.getElementById('btn-copy');
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(function(){ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2500);
+    });
+  }
+
+  function clearAll() {
+    if (!confirm('ล้างข้อมูลทั้งหมดในฟอร์ม?')) return;
+    ['f_id','f_name_th','f_name_en','f_params','f_layout','f_columns',
+     'f_rules','f_datasource','f_group','f_subtotal','f_filename',
+     'f_destpath','f_note'].forEach(function(id){ document.getElementById(id).value = ''; });
+    ['f_type','f_tech','f_audience','f_freq','f_paper'].forEach(function(id){ document.getElementById(id).selectedIndex = 0; });
+    document.querySelectorAll('.chip.selected').forEach(function(c){ c.classList.remove('selected'); });
+    document.getElementById('output-section').classList.remove('show');
+  }
+</script>
+</body>
+</html>

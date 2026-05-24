@@ -1,0 +1,119 @@
+name: Auto pull ProgramType skills
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # 07:00 ICT
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: auto-pull-programtype-skills
+  cancel-in-progress: false
+
+env:
+  BASE_BRANCH: master
+  SOURCES_FILE: skills.sources.yml
+
+jobs:
+  pull-skill:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout sa-knowledge-system
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ env.BASE_BRANCH }}
+
+      - name: Configure git
+        run: |
+          git config user.name "ImFineGarrix"
+          git config user.email "chaon55526@gmail.com"
+
+      - name: Pull external skills into ProgramType_Skills
+        run: |
+          ruby <<'RUBY'
+          require "fileutils"
+          require "tmpdir"
+          require "yaml"
+
+          sources_file = ENV.fetch("SOURCES_FILE")
+          config = YAML.load_file(sources_file)
+          skills = Array(config["skills"]).select { |skill| skill.fetch("enabled", true) }
+
+          abort "No enabled skills found in #{sources_file}" if skills.empty?
+
+          skills.each do |skill|
+            name = skill.fetch("name")
+            repo = skill.fetch("repo")
+            branch = skill.fetch("branch", "main")
+            source_path = skill.fetch("source_path", ".")
+            target_path = skill.fetch("target_path")
+
+            Dir.mktmpdir("external-skill-") do |tmp|
+              puts "Pulling #{name} from #{repo}@#{branch}"
+              system("git", "clone", "--depth", "1", "--branch", branch, repo, tmp, exception: true)
+
+              source = File.expand_path(source_path, tmp)
+              target = File.expand_path(target_path, Dir.pwd)
+
+              unless source.start_with?(File.expand_path(tmp))
+                abort "Invalid source_path for #{name}: #{source_path}"
+              end
+
+              unless target.start_with?(File.expand_path("ProgramType_Skills", Dir.pwd))
+                abort "Invalid target_path for #{name}: #{target_path}"
+              end
+
+              FileUtils.rm_rf(target)
+              FileUtils.mkdir_p(target)
+              FileUtils.cp_r(Dir.glob(File.join(source, "*"), File::FNM_DOTMATCH).reject { |path|
+                [".", ".."].include?(File.basename(path))
+              }, target)
+
+              FileUtils.rm_rf(File.join(target, ".git"))
+              FileUtils.rm_rf(File.join(target, ".github"))
+            end
+          end
+          RUBY
+
+      - name: Check changes
+        id: changes
+        run: |
+          if git diff --quiet -- ProgramType_Skills; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create branch and commit
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          BRANCH="bot/auto-pull-programtype-skills-$(date +%Y%m%d-%H%M%S)"
+          echo "BRANCH=$BRANCH" >> "$GITHUB_ENV"
+
+          git checkout -b "$BRANCH"
+          git add ProgramType_Skills "$SOURCES_FILE"
+          git commit -m "sync: auto pull ProgramType skills"
+          git push origin "$BRANCH"
+
+      - name: Create PR
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --title "sync: auto pull ProgramType skills" \
+            --body "Auto-pulled latest enabled skills from \`${SOURCES_FILE}\` into \`ProgramType_Skills/\`." \
+            --base "$BASE_BRANCH" \
+            --head "$BRANCH"
+
+      - name: Auto merge PR
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr merge "$BRANCH" --merge --auto --delete-branch

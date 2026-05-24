@@ -46,6 +46,8 @@ jobs:
 
           abort "No enabled skills found in #{sources_file}" if skills.empty?
 
+          rows = []
+
           skills.each do |skill|
             name = skill.fetch("name")
             repo = skill.fetch("repo")
@@ -56,6 +58,10 @@ jobs:
             Dir.mktmpdir("external-skill-") do |tmp|
               puts "Pulling #{name} from #{repo}@#{branch}"
               system("git", "clone", "--depth", "1", "--branch", branch, repo, tmp, exception: true)
+
+              sha = `git -C #{tmp} rev-parse HEAD`.strip
+              short_sha = sha[0, 7]
+              repo_web = repo.sub(/\.git$/, "")
 
               source = File.expand_path(source_path, tmp)
               target = File.expand_path(target_path, Dir.pwd)
@@ -76,8 +82,18 @@ jobs:
 
               FileUtils.rm_rf(File.join(target, ".git"))
               FileUtils.rm_rf(File.join(target, ".github"))
+
+              rows << "- **#{name}** ← [`#{repo}`](#{repo_web}) @ `#{branch}` ([`#{short_sha}`](#{repo_web}/commit/#{sha})) → `#{target_path}`"
             end
           end
+
+          File.write("pr-body.md", <<~BODY)
+            ## Synced skills
+
+            Auto-pulled from `#{ENV.fetch("SOURCES_FILE")}`:
+
+            #{rows.join("\n")}
+          BODY
           RUBY
 
       - name: Check changes
@@ -107,7 +123,7 @@ jobs:
         run: |
           gh pr create \
             --title "sync: auto pull ProgramType skills" \
-            --body "Auto-pulled latest enabled skills from \`${SOURCES_FILE}\` into \`ProgramType_Skills/\`." \
+            --body-file pr-body.md \
             --base "$BASE_BRANCH" \
             --head "$BRANCH"
 

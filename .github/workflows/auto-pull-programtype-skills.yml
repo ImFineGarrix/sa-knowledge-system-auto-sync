@@ -83,7 +83,7 @@ jobs:
       - name: Check changes
         id: changes
         run: |
-          if git diff --quiet -- ProgramType_Skills; then
+          if [ -z "$(git status --porcelain -- ProgramType_Skills)" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
